@@ -1,5 +1,6 @@
 package com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service;
 
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.Photo;
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,4 +96,46 @@ public class SlowServiceCaller {
         }
         return responseEntity;
     }
+
+
+
+    @Async
+    public CompletableFuture<ResponseEntity> getPhotoDTO(Integer id) throws InterruptedException {
+        ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        //Thread.sleep(2000);
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("id",id);
+
+        // Query parameters
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+
+        String unresolvedUrl = "https://jsonplaceholder.typicode.com/photos/{id}";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(unresolvedUrl).queryParams(queryParams);
+        String resolvedUrl = builder.buildAndExpand(uriParams).toUriString();
+
+        System.out.println(" Thread name : "+Thread.currentThread().getName()+"  "+resolvedUrl );
+
+        //Setting Up Headers
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        List<MediaType> mediaTypeList = new ArrayList<>();
+
+        mediaTypeList.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypeList);
+        HttpEntity<String> requestEntity = new HttpEntity<>("", httpHeaders);
+
+        try {
+            responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
+            //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
+        } catch (Exception e) {
+            log.error("Exception while invoking receive return endpoint for " +e.getMessage());
+        }
+        return CompletableFuture.completedFuture(responseEntity);
+    }
+
+
 }

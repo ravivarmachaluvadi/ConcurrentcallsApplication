@@ -25,9 +25,9 @@ public class ConcurrentcallsApplication {
 	@Bean
 	public Executor executor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(5);
-		executor.setMaxPoolSize(5);
-		executor.setQueueCapacity(500);
+		executor.setCorePoolSize(250);
+		executor.setMaxPoolSize(250);
+		executor.setQueueCapacity(10000);
 		executor.initialize();
 		return executor;
 	}

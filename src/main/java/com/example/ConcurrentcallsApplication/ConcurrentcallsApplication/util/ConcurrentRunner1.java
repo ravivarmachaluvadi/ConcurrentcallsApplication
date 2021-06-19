@@ -14,30 +14,51 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-@Component
-public class ConcurrentRunner implements CommandLineRunner {
+//@Component
+public class ConcurrentRunner1 /*implements CommandLineRunner*/ {
 
     @Autowired
     SlowServiceCaller slowServiceCaller;
 
-    @Override
+    //@Override
     public void run(String... args) throws Exception {
 
         //async calls
         Instant start = Instant.now();
         List<CompletableFuture<ResponseEntity>> allFutures = new ArrayList<>();
 
-        for (int i = 1; i < 5001; i++) {
-            allFutures.add(slowServiceCaller.getPhotoDTO(i));
+        for (int i = 1; i < 11; i++) {
+            allFutures.add(slowServiceCaller.getUserDTO(i));
         }
 
         CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();
 
-       /* for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println("response: " + allFutures.get(i).get().toString());
-        }*/
+        }
 
+        long asyncTime=  Duration.between(start, Instant.now()).getSeconds();
         System.out.println("Total time: " + Duration.between(start, Instant.now()).getSeconds());
+
+        System.out.println("===============================================================");
+
+        Instant start1 = Instant.now();
+        List<ResponseEntity> allUsers = new ArrayList<>();
+
+        for (int i = 1; i < 11; i++) {
+            allUsers.add(slowServiceCaller.getUserDTOBlockinfCall(i));
+        }
+
+        for (ResponseEntity user  : allUsers) {
+            System.out.println("response: " + user);
+        }
+        long seqTime=  Duration.between(start, Instant.now()).getSeconds();
+        System.out.println("Total time: " + Duration.between(start1, Instant.now()).getSeconds());
+
+        System.out.println(" seqTime-asyncTime "+(seqTime-asyncTime));
+
+        System.out.println("===============================================================");
+
 
     }
 }
