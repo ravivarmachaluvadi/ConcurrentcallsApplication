@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class Controller {
@@ -71,6 +72,46 @@ public class Controller {
         }*/
         long seqTime=  Duration.between(start, Instant.now()).getSeconds();
         System.out.println("Total time: " + seqTime);
+
+    }
+
+
+    @GetMapping("/aynsc/block/photo")
+    public void getPhotosInAsyncBlock() throws InterruptedException, ExecutionException {
+        //async calls
+        Instant start = Instant.now();
+
+        CompletableFuture<ResponseEntity> photoDTOAsync1 = invocationHelper.getPhotoDTOAsync(1);
+
+        ResponseEntity responseEntity1 = photoDTOAsync1.get();
+
+        CompletableFuture<ResponseEntity> photoDTOAsync2 = invocationHelper.getPhotoDTOAsync(2);
+
+        ResponseEntity responseEntity2 = photoDTOAsync2.get();
+
+        System.out.println(responseEntity1.getBody());
+        System.out.println(responseEntity2.getBody());
+
+        System.out.println("Total time: " + Duration.between(start, Instant.now()).getSeconds());
+
+    }
+
+
+    @GetMapping("/aynsc/photo")
+    public void getPhotoInAsync() throws InterruptedException, ExecutionException {
+        //async calls
+        Instant start = Instant.now();
+
+        CompletableFuture<ResponseEntity> photoDTOAsync1 = invocationHelper.getPhotoDTOAsync(1);
+        CompletableFuture<ResponseEntity> photoDTOAsync2 = invocationHelper.getPhotoDTOAsync(2);
+
+        ResponseEntity responseEntity1 = photoDTOAsync1.get();
+        ResponseEntity responseEntity2 = photoDTOAsync2.get();
+
+        System.out.println(responseEntity1.getBody());
+        System.out.println(responseEntity2.getBody());
+
+        System.out.println("Total time: " + Duration.between(start, Instant.now()).getSeconds());
 
     }
 

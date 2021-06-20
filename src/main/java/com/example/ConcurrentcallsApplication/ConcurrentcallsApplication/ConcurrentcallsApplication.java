@@ -26,6 +26,7 @@ public class ConcurrentcallsApplication {
 	public Executor executor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(250);
+		executor.setThreadNamePrefix("my-thread");
 		//executor.setMaxPoolSize(250);
 		//executor.setQueueCapacity(10000);
 		executor.initialize();

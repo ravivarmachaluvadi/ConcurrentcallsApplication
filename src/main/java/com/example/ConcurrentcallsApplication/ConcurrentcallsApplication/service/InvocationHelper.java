@@ -103,7 +103,7 @@ public class InvocationHelper {
     public CompletableFuture<ResponseEntity> getPhotoDTOAsync(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        //Thread.sleep(2000);
+        Thread.sleep(2000);
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
@@ -141,7 +141,7 @@ public class InvocationHelper {
     public ResponseEntity getPhotoDTOBlockinfCall(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        //Thread.sleep(2000);
+        Thread.sleep(2000);
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
