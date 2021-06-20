@@ -1,26 +1,24 @@
 package com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.util;
 
-import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.SlowServiceCaller;
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.InvocationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import javax.xml.transform.Source;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
-@Component
-public class ConcurrentRunner implements CommandLineRunner {
+//@Component
+public class ConcurrentRunner/* implements CommandLineRunner*/ {
 
     @Autowired
-    SlowServiceCaller slowServiceCaller;
+    InvocationHelper invocationHelper;
 
-    @Override
+   // @Override
     public void run(String... args) throws Exception {
 
         //async calls
@@ -28,7 +26,7 @@ public class ConcurrentRunner implements CommandLineRunner {
         List<CompletableFuture<ResponseEntity>> allFutures = new ArrayList<>();
 
         for (int i = 1; i < 5001; i++) {
-            allFutures.add(slowServiceCaller.getPhotoDTO(i));
+            allFutures.add(invocationHelper.getPhotoDTOAsync(i));
         }
 
         CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();

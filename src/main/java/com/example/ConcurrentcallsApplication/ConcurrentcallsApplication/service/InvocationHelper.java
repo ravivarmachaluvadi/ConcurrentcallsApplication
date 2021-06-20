@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
-public class SlowServiceCaller {
+public class InvocationHelper {
 
     @Autowired
     private RestTemplate restTemplate;
@@ -100,7 +100,7 @@ public class SlowServiceCaller {
 
 
     @Async
-    public CompletableFuture<ResponseEntity> getPhotoDTO(Integer id) throws InterruptedException {
+    public CompletableFuture<ResponseEntity> getPhotoDTOAsync(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         //Thread.sleep(2000);
@@ -137,5 +137,57 @@ public class SlowServiceCaller {
         return CompletableFuture.completedFuture(responseEntity);
     }
 
+
+    public ResponseEntity getPhotoDTOBlockinfCall(Integer id) throws InterruptedException {
+        ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        //Thread.sleep(2000);
+
+        // URI (URL) parameters
+        Map<String, Integer> uriParams = new HashMap<>();
+        uriParams.put("id",id);
+
+        // Query parameters
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+
+        String unresolvedUrl = "https://jsonplaceholder.typicode.com/photos/{id}";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(unresolvedUrl).queryParams(queryParams);
+        String resolvedUrl = builder.buildAndExpand(uriParams).toUriString();
+
+        System.out.println(" Thread name : "+Thread.currentThread().getName()+"  "+resolvedUrl );
+
+        //Setting Up Headers
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        List<MediaType> mediaTypeList = new ArrayList<>();
+
+        mediaTypeList.add(MediaType.APPLICATION_JSON);
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(mediaTypeList);
+        HttpEntity<String> requestEntity = new HttpEntity<>("", httpHeaders);
+
+        try {
+            responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
+            //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
+        } catch (Exception e) {
+            log.error("Exception while invoking receive return endpoint for " +e.getMessage());
+        }
+        return responseEntity;
+    }
+
+
+    @Async
+    public CompletableFuture<ResponseEntity> spinAsync(Integer id) throws InterruptedException {
+        ResponseEntity<Void> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        //Thread.sleep(2000);
+
+        try {
+        System.out.println(" Thread name : "+Thread.currentThread().getName()+" "+ "https://jsonplaceholder.typicode.com/photos/"+id );
+        } catch (Exception e) {
+            log.error("Exception while invoking receive return endpoint for " +e.getMessage());
+        }
+        return CompletableFuture.completedFuture(responseEntity);
+    }
 
 }

@@ -1,24 +1,20 @@
 package com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.util;
 
-import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.SlowServiceCaller;
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.InvocationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 
-import javax.xml.transform.Source;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 //@Component
 public class ConcurrentRunner1 /*implements CommandLineRunner*/ {
 
     @Autowired
-    SlowServiceCaller slowServiceCaller;
+    InvocationHelper invocationHelper;
 
     //@Override
     public void run(String... args) throws Exception {
@@ -28,7 +24,7 @@ public class ConcurrentRunner1 /*implements CommandLineRunner*/ {
         List<CompletableFuture<ResponseEntity>> allFutures = new ArrayList<>();
 
         for (int i = 1; i < 11; i++) {
-            allFutures.add(slowServiceCaller.getUserDTO(i));
+            allFutures.add(invocationHelper.getUserDTO(i));
         }
 
         CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();
@@ -46,7 +42,7 @@ public class ConcurrentRunner1 /*implements CommandLineRunner*/ {
         List<ResponseEntity> allUsers = new ArrayList<>();
 
         for (int i = 1; i < 11; i++) {
-            allUsers.add(slowServiceCaller.getUserDTOBlockinfCall(i));
+            allUsers.add(invocationHelper.getUserDTOBlockinfCall(i));
         }
 
         for (ResponseEntity user  : allUsers) {
