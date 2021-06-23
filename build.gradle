@@ -13,6 +13,12 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	compile 'org.springframework.metrics:spring-metrics:latest.release'
+	compile 'io.prometheus:simpleclient_common:latest.release'
+	//implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.4.0'
+	//implementation group: 'io.micrometer', name: 'micrometer-core', version: '1.7.0'
+	compile 'io.micrometer:micrometer-registry-prometheus:latest.release'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
