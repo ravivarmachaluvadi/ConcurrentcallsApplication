@@ -141,7 +141,7 @@ public class InvocationHelper {
     public ResponseEntity getPhotoDTOBlockinfCall(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        Thread.sleep(2000);
+        //Thread.sleep(2000);
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
@@ -170,7 +170,7 @@ public class InvocationHelper {
             responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
             //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
         } catch (Exception e) {
-            log.error("Exception while invoking receive return endpoint for " +e.getMessage());
+            log.error("user not found : id = {} " ,id);
         }
         return responseEntity;
     }
