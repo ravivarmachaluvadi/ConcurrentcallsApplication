@@ -2,6 +2,7 @@ package com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.servic
 
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.Photo;
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.User;
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.repository.PhotoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -12,10 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -24,6 +22,9 @@ public class InvocationHelper {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    PhotoRepository photoRepository;
 
     @Async
     public CompletableFuture<ResponseEntity> getUserDTO(Integer id) throws InterruptedException {
@@ -103,8 +104,6 @@ public class InvocationHelper {
     public CompletableFuture<ResponseEntity> getPhotoDTOAsync(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        Thread.sleep(2000);
-
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
         uriParams.put("id",id);
@@ -130,11 +129,28 @@ public class InvocationHelper {
 
         try {
             responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
+
+            Photo photo= responseEntity.getBody();
+
+            photoRepository.save(photo);
+
             //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
         } catch (Exception e) {
             log.error("Exception while invoking receive return endpoint for " +e.getMessage());
         }
         return CompletableFuture.completedFuture(responseEntity);
+    }
+
+
+
+    @Async
+    public CompletableFuture<Optional<Photo>> getDBPhotoDTOAsync(Integer id) throws InterruptedException {
+
+        Optional<Photo> byId = photoRepository.findById(id);
+
+        log.info(" Record fetched with id {} ",byId.get().getId());
+
+        return CompletableFuture.completedFuture(byId);
     }
 
 
@@ -183,7 +199,7 @@ public class InvocationHelper {
         //Thread.sleep(2000);
 
         try {
-        System.out.println(" Thread name : "+Thread.currentThread().getName()+" "+ "https://jsonplaceholder.typicode.com/photos/"+id );
+        log.info(" Thread name : "+Thread.currentThread().getName()+" "+ "https://jsonplaceholder.typicode.com/photos/"+id );
         } catch (Exception e) {
             log.error("Exception while invoking receive return endpoint for " +e.getMessage());
         }
