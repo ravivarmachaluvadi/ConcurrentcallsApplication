@@ -5,6 +5,7 @@ import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.reposit
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.InvocationHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,19 @@ public class Controller {
     }
 
 
-    @GetMapping("db/aynsc/photos")
+    @GetMapping("/mongo/aynsc/photo/{id}")
+    public ResponseEntity getMongoPhotoInAsync(@PathVariable Integer id) throws InterruptedException, ExecutionException {
+        //async calls
+        Instant start = Instant.now();
+
+        CompletableFuture<Optional<Photo>> dbPhotoDTOAsync = invocationHelper.getDBPhotoDTOAsync(id);
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(dbPhotoDTOAsync.get().get());
+
+    }
+
+
+    @GetMapping("/db/aynsc/photos")
     public void getDBPhotosInAsync() throws InterruptedException, ExecutionException {
         //async calls
         Instant start = Instant.now();

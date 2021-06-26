@@ -2,6 +2,8 @@ package com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.servic
 
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.Photo;
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.dto.User;
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.entity.PhotoEntity;
+import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.repository.PhotoEntityRepository;
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.repository.PhotoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class InvocationHelper {
 
     @Autowired
     PhotoRepository photoRepository;
+
+    @Autowired
+    PhotoEntityRepository photoEntityRepository;
 
     @Async
     public CompletableFuture<ResponseEntity> getUserDTO(Integer id) throws InterruptedException {
@@ -115,7 +120,7 @@ public class InvocationHelper {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(unresolvedUrl).queryParams(queryParams);
         String resolvedUrl = builder.buildAndExpand(uriParams).toUriString();
 
-        System.out.println(" Thread name : "+Thread.currentThread().getName()+"  "+resolvedUrl );
+        log.info(" Thread name : "+Thread.currentThread().getName()+"  "+resolvedUrl );
 
         //Setting Up Headers
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -130,18 +135,16 @@ public class InvocationHelper {
         try {
             responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
 
-            Photo photo= responseEntity.getBody();
+          /*  Photo photo= responseEntity.getBody();
 
             photoRepository.save(photo);
-
+*/
             //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
         } catch (Exception e) {
             log.error("Exception while invoking receive return endpoint for " +e.getMessage());
         }
         return CompletableFuture.completedFuture(responseEntity);
     }
-
-
 
     @Async
     public CompletableFuture<Optional<Photo>> getDBPhotoDTOAsync(Integer id) throws InterruptedException {
