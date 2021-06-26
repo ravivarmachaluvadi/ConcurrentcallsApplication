@@ -43,13 +43,13 @@ public class OraDBController {
             allFutures.add(invocationHelper.postPhotoDTOAsync(i));
         }
 
-        CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();
+        //CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();
 
        /* for (int i = 0; i < 1000; i++) {
             System.out.println("response: " + allFutures.get(i).get().toString());
         }*/
 
-        System.out.println("Total time: " + Duration.between(start, Instant.now()).getSeconds());
+        log.info("Total time: " + Duration.between(start, Instant.now()).getSeconds());
 
     }
 
@@ -57,22 +57,8 @@ public class OraDBController {
     public void postPhotoInAsync( @PathVariable Integer id ) throws InterruptedException, ExecutionException {
         //async calls
         Instant start = Instant.now();
-
-        CompletableFuture<ResponseEntity> photoDTOAsync1 = invocationHelper.postPhotoDTOAsync(id);
-
-        Photo photo= (Photo) photoDTOAsync1.get().getBody();
-
-        PhotoEntity photoEntity= new PhotoEntity();
-
-        photoEntity.setAlbumId(photo.getAlbumId());
-        photoEntity.setId(photo.getId());
-        photoEntity.setTitle(photo.getTitle());
-        photoEntity.setThumbnailUrl(photo.getThumbnailUrl());
-        photoEntity.setUrl(photo.getUrl());
-
-        photoEntityRepository.save(photoEntity);
-
-        System.out.println("Total time: " + Duration.between(start, Instant.now()).getSeconds());
+        invocationHelper.postPhotoDTOAsync(id);
+        log.info("Total time: " + Duration.between(start, Instant.now()).getSeconds());
 
     }
 

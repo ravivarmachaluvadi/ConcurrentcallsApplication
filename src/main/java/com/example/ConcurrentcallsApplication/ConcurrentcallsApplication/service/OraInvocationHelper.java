@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -30,6 +31,8 @@ public class OraInvocationHelper {
     @Async
     public CompletableFuture<ResponseEntity> postPhotoDTOAsync(Integer id) throws InterruptedException {
         ResponseEntity<Photo> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        TimeUnit.SECONDS.sleep(2);
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
