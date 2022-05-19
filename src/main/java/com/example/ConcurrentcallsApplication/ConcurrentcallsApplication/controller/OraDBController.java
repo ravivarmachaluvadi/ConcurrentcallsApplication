@@ -8,6 +8,9 @@ import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service
 import com.example.ConcurrentcallsApplication.ConcurrentcallsApplication.service.OraInvocationHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,7 +86,7 @@ public class OraDBController {
     }
 
     @GetMapping("ora/aynsc/photo/{id}")
-    public ResponseEntity getMongoPhotoInAsync(@PathVariable Integer id) throws InterruptedException, ExecutionException {
+    public ResponseEntity getOraPhotoInAsync(@PathVariable Integer id) throws InterruptedException, ExecutionException {
         //async calls
         Instant start = Instant.now();
 

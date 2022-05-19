@@ -35,7 +35,7 @@ public class InvocationHelper {
     public CompletableFuture<ResponseEntity> getUserDTO(Integer id) throws InterruptedException {
         ResponseEntity<User> responseEntity= new ResponseEntity("Custom Response", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        Thread.sleep(2000);
+        //Thread.sleep(2000);
 
         // URI (URL) parameters
         Map<String, Integer> uriParams = new HashMap<>();
@@ -113,6 +113,7 @@ public class InvocationHelper {
         Map<String, Integer> uriParams = new HashMap<>();
         uriParams.put("id",id);
 
+        Thread.sleep(500);
         // Query parameters
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 
@@ -187,7 +188,6 @@ public class InvocationHelper {
 
         try {
             responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,Photo.class);
-            //responseEntity= restTemplate.exchange(resolvedUrl, HttpMethod.GET, requestEntity,String.class);
         } catch (Exception e) {
             log.error("user not found : id = {} " ,id);
         }
